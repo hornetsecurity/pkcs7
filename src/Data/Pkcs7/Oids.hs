@@ -11,6 +11,7 @@ module Data.Pkcs7.Oids
       -- * Content Types
     , oidData
     , oidDigestedData
+    , oidSignedData
       -- * Digest Algorithms
     , oidMD2
     , oidMD4
@@ -20,6 +21,18 @@ module Data.Pkcs7.Oids
     , oidSHA384
     , oidSHA512
     , oidSHA224
+    -- * Signature Algorithms
+    , oidDSA
+    , oidSHA1WithDSA
+    , oidRSA
+    , oidMD2WithRSA
+    , oidMD4WithRSA
+    , oidMD5WithRSA
+    , oidSHA1WithRSA
+    , oidSHA256WithRSA
+    , oidSHA384WithRSA
+    , oidSHA512WithRSA
+    , oidSHA224WithRSA
     ) where
 
 import           Data.List     (find)
@@ -48,6 +61,11 @@ oidData = [ 1, 2, 840, 113549, 1, 7, 1 ]
 oidDigestedData :: OID
 oidDigestedData = [ 1, 2, 840, 113549, 1, 7, 5 ]
 
+-- id-signedData OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--    us(840) rsadsi(113549) pkcs(1) pkcs7(7) 2 }
+oidSignedData :: OID
+oidSignedData = [ 1, 2, 840, 113549, 1, 7, 2 ]
+
 -- md2 OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840)
 --     rsadsi(113549) digestAlgorithm(2) 2 }
 oidMD2 :: OID
@@ -67,6 +85,61 @@ oidMD5 = [ 1, 2, 840, 113549, 2, 5 ]
 --     oiw(14) secsig(3) algorithm(2) 26 }
 oidSHA1 :: OID
 oidSHA1 = [ 1, 3, 14, 3, 2, 26 ]
+
+-- id-dsa OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) x9-57 (10040) x9cm(4) 1 }
+oidDSA :: OID
+oidDSA = [ 1, 2, 840, 10040, 4, 1 ]
+
+-- id-dsa-with-sha1 OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) x9-57 (10040) x9cm(4) 3 }
+oidSHA1WithDSA :: OID
+oidSHA1WithDSA = [ 1, 2, 840, 10040, 4, 3 ]
+
+-- rsaEncryption OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) rsadsi(113549) pkcs(1) pkcs-1(1) 1 }
+oidRSA :: OID
+oidRSA = [ 1, 2, 840, 113549, 1, 1, 1 ]
+
+-- md2WithRSAEncryption OBJECT IDENTIFIER ::= { iso(1)
+--     member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-1(1) 2 }
+oidMD2WithRSA :: OID
+oidMD2WithRSA = [ 1, 2, 840, 113549, 1, 1, 2 ]
+
+-- md4WithRSAEncryption OBJECT IDENTIFIER ::= { iso(1)
+--     member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-1(1) 3 }
+oidMD4WithRSA :: OID
+oidMD4WithRSA = [ 1, 2, 840, 113549, 1, 1, 3 ]
+
+-- md5WithRSAEncryption OBJECT IDENTIFIER ::= { iso(1)
+--     member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-1(1) 4 }
+oidMD5WithRSA :: OID
+oidMD5WithRSA = [ 1, 2, 840, 113549, 1, 1, 4 ]
+
+-- sha1WithRSAEncryption OBJECT IDENTIFIER ::= { iso(1)
+--     member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-1(1) 5 }
+oidSHA1WithRSA :: OID
+oidSHA1WithRSA = [ 1, 2, 840, 113549, 1, 1, 5 ]
+
+-- sha256WithRSAEncryption OBJECT IDENTIFIER ::= { iso(1)
+--     member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-1(1) 11 }
+oidSHA256WithRSA :: OID
+oidSHA256WithRSA = [ 1, 2, 840, 113549, 1, 1, 11 ]
+
+-- sha384WithRSAEncryption OBJECT IDENTIFIER ::= { iso(1)
+--     member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-1(1) 12 }
+oidSHA384WithRSA :: OID
+oidSHA384WithRSA = [ 1, 2, 840, 113549, 1, 1, 12 ]
+
+-- sha512WithRSAEncryption OBJECT IDENTIFIER ::= { iso(1)
+--     member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-1(1) 13 }
+oidSHA512WithRSA :: OID
+oidSHA512WithRSA = [ 1, 2, 840, 113549, 1, 1, 13 ]
+
+-- sha224WithRSAEncryption OBJECT IDENTIFIER ::= { iso(1)
+--     member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-1(1) 14 }
+oidSHA224WithRSA :: OID
+oidSHA224WithRSA = [ 1, 2, 840, 113549, 1, 1, 14 ]
 
 -- sha-256 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16)
 --     us(840) organization(1) gov(101) csor(3) nistAlgorithm(4)

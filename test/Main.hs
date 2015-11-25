@@ -4,6 +4,7 @@ import           Test.Tasty
 
 import           Tests.DigestedData
 import           Tests.EncryptedData
+import           Tests.EnvelopedData
 import           Tests.SignedData
 import           Tests.Types
 import           Tests.X509
@@ -14,4 +15,5 @@ main = defaultMain $ testGroup "Tests" [ testX509
                                        , testDigestedData
                                        , testSignedData
                                        , testEncryptedData
+                                       , testEnvelopedData
                                        ]

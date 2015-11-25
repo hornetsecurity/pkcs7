@@ -13,6 +13,7 @@ module Data.Pkcs7.Oids
     , oidDigestedData
     , oidSignedData
     , oidEncryptedData
+    , oidEnvelopedData
       -- * Digest Algorithms
     , oidMD2
     , oidMD4
@@ -48,6 +49,14 @@ module Data.Pkcs7.Oids
     , oidAES128GCM
     , oidAES192GCM
     , oidAES256GCM
+    -- * Key Agreement Encryption Algorithms
+    , oidESDH
+    , oidSSDH
+    -- * Key Wrap Algorithms
+    , oidDES3Wrap
+    , oidRC2Wrap
+    -- * Key Derivation Algorithms
+    , oidPBKDF2
     ) where
 
 import           Data.List     (find)
@@ -85,6 +94,11 @@ oidSignedData = [ 1, 2, 840, 113549, 1, 7, 2 ]
 --     us(840) rsadsi(113549) pkcs(1) pkcs7(7) 6 }
 oidEncryptedData :: OID
 oidEncryptedData = [ 1, 2, 840, 113549, 1, 7, 6 ]
+
+-- id-envelopedData OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) rsadsi(113549) pkcs(1) pkcs7(7) 3 }
+oidEnvelopedData :: OID
+oidEnvelopedData = [ 1, 2, 840, 113549, 1, 7, 3 ]
 
 -- md2 OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840)
 --     rsadsi(113549) digestAlgorithm(2) 2 }
@@ -238,3 +252,31 @@ oidAES192GCM = oidAES ++ [ 26 ]
 -- id-aes256-GCM OBJECT IDENTIFIER ::= { aes 46 }
 oidAES256GCM :: OID
 oidAES256GCM = oidAES ++ [ 46 ]
+
+-- id-alg-ESDH OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16)
+--     alg(3) 5 }
+oidESDH :: OID
+oidESDH = [ 1, 2, 840, 113549, 1, 9, 16, 3, 5 ]
+
+-- id-alg-SSDH OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16)
+--     alg(3) 10 }
+oidSSDH :: OID
+oidSSDH = [ 1, 2, 840, 113549, 1, 9, 16, 3, 10 ]
+
+-- id-alg-CMS3DESwrap OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16) alg(3) 6 }
+oidDES3Wrap :: OID
+oidDES3Wrap = [ 1, 2, 840, 113549, 1, 9, 16, 3, 6 ]
+
+-- id-alg-CMSRC2wrap OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16) alg(3) 7 }
+oidRC2Wrap :: OID
+oidRC2Wrap = [ 1, 2, 840, 113549, 1, 9, 16, 3, 7 ]
+
+-- id-PBKDF2 OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840)
+--     rsadsi(113549) pkcs(1) pkcs-5(5) 12 }
+oidPBKDF2 :: OID
+oidPBKDF2 = [ 1, 2, 840, 113549, 1, 5, 12 ]
+

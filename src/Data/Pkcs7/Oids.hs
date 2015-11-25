@@ -12,6 +12,7 @@ module Data.Pkcs7.Oids
     , oidData
     , oidDigestedData
     , oidSignedData
+    , oidEncryptedData
       -- * Digest Algorithms
     , oidMD2
     , oidMD4
@@ -33,6 +34,20 @@ module Data.Pkcs7.Oids
     , oidSHA384WithRSA
     , oidSHA512WithRSA
     , oidSHA224WithRSA
+    -- * Symmetric Encryption Algorithms
+    , oidDESCBC
+    , oidDESEDE3CBC
+    , oidRC2
+    , oidAES
+    , oidAES128CBC
+    , oidAES192CBC
+    , oidAES256CBC
+    , oidAES128CCM
+    , oidAES192CCM
+    , oidAES256CCM
+    , oidAES128GCM
+    , oidAES192GCM
+    , oidAES256GCM
     ) where
 
 import           Data.List     (find)
@@ -65,6 +80,11 @@ oidDigestedData = [ 1, 2, 840, 113549, 1, 7, 5 ]
 --    us(840) rsadsi(113549) pkcs(1) pkcs7(7) 2 }
 oidSignedData :: OID
 oidSignedData = [ 1, 2, 840, 113549, 1, 7, 2 ]
+
+-- id-encryptedData OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) rsadsi(113549) pkcs(1) pkcs7(7) 6 }
+oidEncryptedData :: OID
+oidEncryptedData = [ 1, 2, 840, 113549, 1, 7, 6 ]
 
 -- md2 OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840)
 --     rsadsi(113549) digestAlgorithm(2) 2 }
@@ -164,3 +184,57 @@ oidSHA512 = [ 2, 16, 840, 1, 101, 3, 4, 2, 3 ]
 --     hashAlgs(2) sha224(4) }
 oidSHA224 :: OID
 oidSHA224 = [ 2, 16, 840, 1, 101, 3, 4, 2, 4 ]
+
+oidDESCBC :: OID
+oidDESCBC = [ 1, 3, 14, 3, 2, 7 ]
+
+-- des-ede3-cbc OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) rsadsi(113549) encryptionAlgorithm(3) 7 }
+oidDESEDE3CBC :: OID
+oidDESEDE3CBC = [ 1, 2, 840, 113549, 3, 7 ]
+
+-- rc2-cbc OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840)
+--     rsadsi(113549) encryptionAlgorithm(3) 2 }
+oidRC2 :: OID
+oidRC2 = [ 1, 2, 840, 113549, 3, 2 ]
+
+-- aes OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16) us(840)
+--     organization(1) gov(101) csor(3) nistAlgorithm(4) 1 }
+oidAES :: OID
+oidAES = [ 2, 16, 840, 1, 101, 3, 4, 1 ]
+
+-- id-aes128-CBC OBJECT IDENTIFIER ::= { aes 2 }
+oidAES128CBC :: OID
+oidAES128CBC = oidAES ++ [ 2 ]
+
+-- id-aes192-CBC OBJECT IDENTIFIER ::= { aes 22 }
+oidAES192CBC :: OID
+oidAES192CBC = oidAES ++ [ 22 ]
+
+-- id-aes256-CBC OBJECT IDENTIFIER ::= { aes 42 }
+oidAES256CBC :: OID
+oidAES256CBC = oidAES ++ [ 42 ]
+
+-- id-aes128-CCM OBJECT IDENTIFIER ::= { aes 7 }
+oidAES128CCM :: OID
+oidAES128CCM = oidAES ++ [ 7 ]
+
+-- id-aes192-CCM OBJECT IDENTIFIER ::= { aes 27 }
+oidAES192CCM :: OID
+oidAES192CCM = oidAES ++ [ 27 ]
+
+-- id-aes256-CCM OBJECT IDENTIFIER ::= { aes 47 }
+oidAES256CCM :: OID
+oidAES256CCM = oidAES ++ [ 47 ]
+
+-- id-aes128-GCM OBJECT IDENTIFIER ::= { aes 6 }
+oidAES128GCM :: OID
+oidAES128GCM = oidAES ++ [ 6 ]
+
+-- id-aes192-GCM OBJECT IDENTIFIER ::= { aes 26 }
+oidAES192GCM :: OID
+oidAES192GCM = oidAES ++ [ 26 ]
+
+-- id-aes256-GCM OBJECT IDENTIFIER ::= { aes 46 }
+oidAES256GCM :: OID
+oidAES256GCM = oidAES ++ [ 46 ]

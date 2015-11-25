@@ -14,6 +14,7 @@ module Data.Pkcs7.Oids
     , oidSignedData
     , oidEncryptedData
     , oidEnvelopedData
+    , oidAuthenticatedData
       -- * Digest Algorithms
     , oidMD2
     , oidMD4
@@ -57,6 +58,8 @@ module Data.Pkcs7.Oids
     , oidRC2Wrap
     -- * Key Derivation Algorithms
     , oidPBKDF2
+    -- * Message Authentication Algorithms
+    , oidHMACSHA1
     ) where
 
 import           Data.List     (find)
@@ -99,6 +102,12 @@ oidEncryptedData = [ 1, 2, 840, 113549, 1, 7, 6 ]
 --     us(840) rsadsi(113549) pkcs(1) pkcs7(7) 3 }
 oidEnvelopedData :: OID
 oidEnvelopedData = [ 1, 2, 840, 113549, 1, 7, 3 ]
+
+-- id-ct-authData OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+--     us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16)
+--     ct(1) 2 }
+oidAuthenticatedData :: OID
+oidAuthenticatedData = [ 1, 2, 840, 113549, 1, 9, 16, 1, 2 ]
 
 -- md2 OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840)
 --     rsadsi(113549) digestAlgorithm(2) 2 }
@@ -280,3 +289,8 @@ oidRC2Wrap = [ 1, 2, 840, 113549, 1, 9, 16, 3, 7 ]
 oidPBKDF2 :: OID
 oidPBKDF2 = [ 1, 2, 840, 113549, 1, 5, 12 ]
 
+-- hMAC-SHA1 OBJECT IDENTIFIER ::= { iso(1)
+--    identified-organization(3) dod(6) internet(1) security(5)
+--    mechanisms(5) 8 1 2 }
+oidHMACSHA1 :: OID
+oidHMACSHA1 = [ 1, 3, 6, 1, 5, 5, 8, 1, 2 ]

@@ -2,6 +2,7 @@ module Main (main) where
 
 import           Test.Tasty
 
+import           Tests.AuthenticatedData
 import           Tests.DigestedData
 import           Tests.EncryptedData
 import           Tests.EnvelopedData
@@ -16,4 +17,5 @@ main = defaultMain $ testGroup "Tests" [ testX509
                                        , testSignedData
                                        , testEncryptedData
                                        , testEnvelopedData
+                                       , testAuthenticatedData
                                        ]

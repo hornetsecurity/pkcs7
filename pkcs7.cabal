@@ -1,7 +1,10 @@
 name:                pkcs7
 version:             0.1.0
 synopsis:            PKCS #7 / CMS data structures and functions
-description:         Please see README.md
+description:
+    This library provides data structures and functions to represent,
+    read, and write objects defined by PKCS #7 (RFC2315) and
+    Cryptographic Message Syntax (RFC2630).
 license:             BSD3
 license-file:        LICENSE
 author:              Enno Cramer

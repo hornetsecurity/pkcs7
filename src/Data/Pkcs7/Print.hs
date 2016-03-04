@@ -20,7 +20,7 @@ module Data.Pkcs7.Print
     ( PrintASN1
     , runPrintASN1State
     , runPrintASN1
-    -- * Primitives
+      -- * Primitives
     , putNext
     , putMany
     , putOID
@@ -31,14 +31,14 @@ module Data.Pkcs7.Print
     , putObject
     , putObjectMaybe
     , putStructureFields
-    -- * Tagging
+      -- * Tagging
     , putExplicit
     , putExplicitMaybe
     , putImplicit
     , putImplicitMaybe
     , putContext
     , putContextMaybe
-    -- * Container
+      -- * Container
     , putMaybe
     , putSequenceOf
     , putSequenceOfMaybe
@@ -47,12 +47,12 @@ module Data.Pkcs7.Print
     , (<>)
     ) where
 
-import           Data.ByteString    (ByteString)
-import           Data.Hourglass     (DateTime, TimezoneOffset (..))
-import           Data.Maybe         (fromMaybe)
-import           Data.Monoid        ((<>))
+import           Data.ByteString    ( ByteString )
+import           Data.Hourglass     ( DateTime, TimezoneOffset(..) )
+import           Data.Maybe         ( fromMaybe )
+import           Data.Monoid        ( (<>) )
 
-import           Data.ASN1.BitArray (BitArray)
+import           Data.ASN1.BitArray ( BitArray )
 import           Data.Pkcs7.ASN1
 
 newtype PrintASN1 = P { runP :: ASN1S }
@@ -112,7 +112,9 @@ putStructureFields o = P $ toASN1Fields o
 
 -- | Put an object into the ASN1 stream wrapped in an EXPLICIT tag.
 putExplicit :: ASN1Object a => Int -> a -> PrintASN1
-putExplicit n o = putNext (Start (Container Context n)) <> putObject o <> putNext (End (Container Context n))
+putExplicit n o = putNext (Start (Container Context n))
+    <> putObject o
+    <> putNext (End (Container Context n))
 
 -- | Maybe put an object into the ASN1 stream wrapped in an EXPLICIT tag.
 putExplicitMaybe :: ASN1Object a => Int -> Maybe a -> PrintASN1
@@ -120,7 +122,9 @@ putExplicitMaybe n = putMaybe . fmap (putExplicit n)
 
 -- | Put an object into the ASN1 stream wrapped in an IMPLICIT tag.
 putImplicit :: ASN1Structure a => Int -> a -> PrintASN1
-putImplicit n o = putNext (Start (Container Context n)) <> putStructureFields o <> putNext (End (Container Context n))
+putImplicit n o = putNext (Start (Container Context n))
+    <> putStructureFields o
+    <> putNext (End (Container Context n))
 
 -- | Maybe put an object into the ASN1 stream wrapped in an IMPLICIT tag.
 putImplicitMaybe :: ASN1Structure a => Int -> Maybe a -> PrintASN1
@@ -128,7 +132,9 @@ putImplicitMaybe n = putMaybe . fmap (putImplicit n)
 
 -- | Put an printer into the ASN1 stream wrapped in an CONTEXT tag.
 putContext :: Int -> PrintASN1 -> PrintASN1
-putContext n p = putNext (Start (Container Context n)) <> p <> putNext (End (Container Context n))
+putContext n p = putNext (Start (Container Context n))
+    <> p
+    <> putNext (End (Container Context n))
 
 -- | Maybe put an printer into the ASN1 stream wrapped in an CONTEXT tag.
 putContextMaybe :: Int -> Maybe PrintASN1 -> PrintASN1

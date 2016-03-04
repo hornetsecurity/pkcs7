@@ -24,7 +24,7 @@ module Data.Pkcs7.Oids
     , oidSHA384
     , oidSHA512
     , oidSHA224
-    -- * Signature Algorithms
+      -- * Signature Algorithms
     , oidDSA
     , oidSHA1WithDSA
     , oidRSA
@@ -36,7 +36,7 @@ module Data.Pkcs7.Oids
     , oidSHA384WithRSA
     , oidSHA512WithRSA
     , oidSHA224WithRSA
-    -- * Symmetric Encryption Algorithms
+      -- * Symmetric Encryption Algorithms
     , oidDESCBC
     , oidDESEDE3CBC
     , oidRC2
@@ -50,33 +50,35 @@ module Data.Pkcs7.Oids
     , oidAES128GCM
     , oidAES192GCM
     , oidAES256GCM
-    -- * Key Agreement Encryption Algorithms
+      -- * Key Agreement Encryption Algorithms
     , oidESDH
     , oidSSDH
-    -- * Key Wrap Algorithms
+      -- * Key Wrap Algorithms
     , oidDES3Wrap
     , oidRC2Wrap
-    -- * Key Derivation Algorithms
+      -- * Key Derivation Algorithms
     , oidPBKDF2
-    -- * Message Authentication Algorithms
+      -- * Message Authentication Algorithms
     , oidHMACSHA1
     ) where
 
-import           Data.List     (find)
-import           Data.Maybe    (fromMaybe)
+import           Data.List     ( find )
+import           Data.Maybe    ( fromMaybe )
 
-import           Data.ASN1.OID (OID)
+import           Data.ASN1.OID ( OID )
 
 -- a mapping between a custom value and an OBJECT IDENTIFIER
-type OIDTable a = [ (a, OID) ]
+type OIDTable a = [(a, OID)]
 
 -- lookup the OID to a given value in an OIDTable
 toOID :: (Eq a, Show a) => OIDTable a -> a -> OID
-toOID table v = fromMaybe (error $ "missing OID for " ++ show v) $ lookup v table
+toOID table v = fromMaybe (error $ "missing OID for " ++ show v) $
+    lookup v table
 
 -- lookup the value to a given OID in an OIDTable
 fromOID :: Eq a => (OID -> a) -> OIDTable a -> OID -> a
-fromOID def table oid = fromMaybe (def oid) $ fst <$> find ((==) oid . snd) table
+fromOID def table oid = fromMaybe (def oid) $
+    fst <$> find ((==) oid . snd) table
 
 -- id-data OBJECT IDENTIFIER ::= { iso(1) member-body(2)
 --   us(840) rsadsi(113549) pkcs(1) pkcs7(7) 1 }

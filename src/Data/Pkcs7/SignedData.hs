@@ -21,9 +21,9 @@ module Data.Pkcs7.SignedData
     , SignedData(..)
     ) where
 
-import           Data.ASN1.BitArray      (BitArray)
-import           Data.ByteArray          (constEq)
-import           Data.ByteString         (ByteString)
+import           Data.ASN1.BitArray      ( BitArray )
+import           Data.ByteArray          ( constEq )
+import           Data.ByteString         ( ByteString )
 
 import           Data.Pkcs7.ASN1
 import           Data.Pkcs7.Parse
@@ -32,23 +32,24 @@ import           Data.Pkcs7.Print
 import           Data.Pkcs7.Oids
 import           Data.Pkcs7.Types
 
-import           Data.Pkcs7.DigestedData (DigestAlgorithm (..),
-                                          DigestAlgorithmIdentifier)
+import           Data.Pkcs7.DigestedData ( DigestAlgorithm(..)
+                                         , DigestAlgorithmIdentifier )
 
 -- | Asymmetric algorithms to encrypt message digests.
-data SignatureAlgorithm = SignatureDSA
-                        | SignatureSHA1WithDSA
-                        | SignatureRSA
-                        | SignatureMD2WithRSA
-                        | SignatureMD4WithRSA
-                        | SignatureMD5WithRSA
-                        | SignatureSHA1WithRSA
-                        | SignatureSHA256WithRSA
-                        | SignatureSHA384WithRSA
-                        | SignatureSHA512WithRSA
-                        | SignatureSHA224WithRSA
-                        | SignatureUnknown OID
-                          deriving (Eq, Show)
+data SignatureAlgorithm =
+      SignatureDSA
+    | SignatureSHA1WithDSA
+    | SignatureRSA
+    | SignatureMD2WithRSA
+    | SignatureMD4WithRSA
+    | SignatureMD5WithRSA
+    | SignatureSHA1WithRSA
+    | SignatureSHA256WithRSA
+    | SignatureSHA384WithRSA
+    | SignatureSHA512WithRSA
+    | SignatureSHA224WithRSA
+    | SignatureUnknown OID
+    deriving (Eq, Show)
 
 saTable :: OIDTable SignatureAlgorithm
 saTable = [ (SignatureDSA, oidDSA)
@@ -83,15 +84,19 @@ instance Eq Signature where
 
 instance ASN1Object Signature where
     toASN1 (Signature bs) = runPrintASN1State printer
-        where printer = putOctetString bs
+      where
+        printer = putOctetString bs
     fromASN1 = runParseASN1State parser
-        where parser = Signature <$> getOctetString
+      where
+        parser = Signature <$> getOctetString
 
 -- | Extended certificates.
-data ExtendedCertificate = ExtendedCertificate { extendedCertificateVersion                   :: Version
-                                               , extendedCertificateCertificate               :: Certificate
-                                               , extendedCertificateUnauthenticatedAttributes :: [Attribute Any]
-                                               } deriving (Eq, Show)
+data ExtendedCertificate =
+      ExtendedCertificate { extendedCertificateVersion                   :: Version
+                          , extendedCertificateCertificate               :: Certificate
+                          , extendedCertificateUnauthenticatedAttributes :: [Attribute Any]
+                          }
+    deriving (Eq, Show)
 
 -- ExtendedCertificateInfo ::= SEQUENCE {
 --   version CMSVersion,
@@ -101,13 +106,13 @@ data ExtendedCertificate = ExtendedCertificate { extendedCertificateVersion     
 -- UnauthAttributes ::= SET SIZE (1..MAX) OF Attribute
 instance ASN1Structure ExtendedCertificate where
     toASN1Fields ExtendedCertificate{..} = runPrintASN1State printer
-        where printer = putObject extendedCertificateVersion
-                        <> putObject extendedCertificateCertificate
-                        <> putSetOf extendedCertificateUnauthenticatedAttributes
+      where
+        printer = putObject extendedCertificateVersion
+            <> putObject extendedCertificateCertificate
+            <> putSetOf extendedCertificateUnauthenticatedAttributes
     fromASN1Fields = runParseASN1State parser
-        where parser = ExtendedCertificate <$> getObject
-                                           <*> getObject
-                                           <*> getSetOf
+      where
+        parser = ExtendedCertificate <$> getObject <*> getObject <*> getSetOf
 
 instance ASN1Object ExtendedCertificate where
     toASN1 = toASN1Structure Sequence
@@ -117,29 +122,31 @@ instance ASN1Object ExtendedCertificate where
 data Signed a = Signed { signedObject             :: a
                        , signedSignatureAlgorithm :: SignatureAlgorithmIdentifier
                        , signedSignature          :: BitArray
-                       } deriving (Eq, Show)
+                       }
+    deriving (Eq, Show)
 
 instance ASN1Object a => ASN1Structure (Signed a) where
     toASN1Fields Signed{..} = runPrintASN1State printer
-        where printer = putObject signedObject
-                        <> putObject signedSignatureAlgorithm
-                        <> putBitString signedSignature
+      where
+        printer = putObject signedObject
+            <> putObject signedSignatureAlgorithm
+            <> putBitString signedSignature
     fromASN1Fields = runParseASN1State parser
-        where parser = Signed <$> getObject
-                              <*> getObject
-                              <*> getBitString
+      where
+        parser = Signed <$> getObject <*> getObject <*> getBitString
 
 instance ASN1Object a => ASN1Object (Signed a) where
     toASN1 = toASN1Structure Sequence
     fromASN1 = fromASN1Structure Sequence
 
 -- | Different options for including certificates within SignedData.
-data CertificateChoice = CertificateCertificate (Signed Certificate)
-                       | CertificateExtended (Signed ExtendedCertificate)
-                       | CertificateAttributeCertificateV1 (Signed Any)
-                       | CertificateAttributeCertificateV2 (Signed Any)
-                       | CertificateOther OID Any
-                         deriving (Eq, Show)
+data CertificateChoice =
+      CertificateCertificate (Signed Certificate)
+    | CertificateExtended (Signed ExtendedCertificate)
+    | CertificateAttributeCertificateV1 (Signed Any)
+    | CertificateAttributeCertificateV2 (Signed Any)
+    | CertificateOther OID Any
+    deriving (Eq, Show)
 
 -- CertificateChoices ::= CHOICE {
 --   certificate Certificate,
@@ -160,37 +167,41 @@ data CertificateChoice = CertificateCertificate (Signed Certificate)
 --   otherCert ANY DEFINED BY otherCertFormat }
 instance ASN1Object CertificateChoice where
     toASN1 o = runPrintASN1State printer
-        where printer = case o of
-                          CertificateCertificate o'            -> putObject o'
-                          CertificateExtended o'               -> putImplicit 0 o'
-                          CertificateAttributeCertificateV1 o' -> putImplicit 1 o'
-                          CertificateAttributeCertificateV2 o' -> putImplicit 2 o'
-                          CertificateOther oid o'              -> putContext 3 (putOID oid <> putObject o')
+      where
+        printer = case o of
+            CertificateCertificate o' -> putObject o'
+            CertificateExtended o' -> putImplicit 0 o'
+            CertificateAttributeCertificateV1 o' -> putImplicit 1 o'
+            CertificateAttributeCertificateV2 o' -> putImplicit 2 o'
+            CertificateOther oid o' -> putContext 3 (putOID oid <> putObject o')
     fromASN1 = runParseASN1State parser
-        where parser = onContextMaybe 3 (CertificateOther <$> getOID <*> getObject)
-                       `orChoice`
-                       (fmap CertificateAttributeCertificateV2 <$> getImplicitMaybe 2)
-                       `orChoice`
-                       (fmap CertificateAttributeCertificateV1 <$> getImplicitMaybe 1)
-                       `orChoice`
-                       (fmap CertificateExtended <$> getImplicitMaybe 0)
-                       `orChoiceDefault`
-                       (CertificateCertificate <$> getObject)
+      where
+        parser = onContextMaybe 3 (CertificateOther <$> getOID <*> getObject)
+                 `orChoice`
+                 (fmap CertificateAttributeCertificateV2 <$> getImplicitMaybe 2)
+                 `orChoice`
+                 (fmap CertificateAttributeCertificateV1 <$> getImplicitMaybe 1)
+                 `orChoice`
+                 (fmap CertificateExtended <$> getImplicitMaybe 0)
+                 `orChoiceDefault`
+                 (CertificateCertificate <$> getObject)
 
 -- | Certificate revocation data.
 data RevocationChoice = RevocationCRL CRL
                       | RevocationOther OID Any
-                        deriving (Eq, Show)
+    deriving (Eq, Show)
 
 instance ASN1Object RevocationChoice where
     toASN1 o = runPrintASN1State printer
-        where printer = case o of
-                          RevocationCRL o'       -> putObject o'
-                          RevocationOther oid o' -> putContext 0 (putOID oid <> putObject o')
+      where
+        printer = case o of
+            RevocationCRL o' -> putObject o'
+            RevocationOther oid o' -> putContext 0 (putOID oid <> putObject o')
     fromASN1 = runParseASN1State parser
-        where parser = onContextMaybe 0 (RevocationOther <$> getOID <*> getObject)
-                       `orChoiceDefault`
-                       (RevocationCRL <$> getObject)
+      where
+        parser = onContextMaybe 0 (RevocationOther <$> getOID <*> getObject)
+                 `orChoiceDefault`
+                 (RevocationCRL <$> getObject)
 
 -- | Identifying a signer via a subject-key-identifier.
 newtype SubjectKeyIdentifier = SubjectKeyIdentifier ByteString
@@ -198,27 +209,31 @@ newtype SubjectKeyIdentifier = SubjectKeyIdentifier ByteString
 
 instance ASN1Object SubjectKeyIdentifier where
     toASN1 (SubjectKeyIdentifier bs) = runPrintASN1State printer
-        where printer = putOctetString bs
+      where
+        printer = putOctetString bs
     fromASN1 = runParseASN1State parser
-        where parser = SubjectKeyIdentifier <$> getOctetString
+      where
+        parser = SubjectKeyIdentifier <$> getOctetString
 
 -- | Identifying information for a signer.
 data SignerIdentifier = SignerIssuerAndSerial IssuerAndSerial
                       | SignerSubjectKeyIdentifier SubjectKeyIdentifier
-                        deriving (Eq, Show)
+    deriving (Eq, Show)
 
 -- SignerIdentifier ::= CHOICE {
 --   issuerAndSerialNumber IssuerAndSerialNumber,
 --   subjectKeyIdentifier [0] SubjectKeyIdentifier }
 instance ASN1Object SignerIdentifier where
     toASN1 o = runPrintASN1State printer
-        where printer = case o of
-                          SignerIssuerAndSerial o'      -> putObject o'
-                          SignerSubjectKeyIdentifier o' -> putExplicit 0 o'
+      where
+        printer = case o of
+            SignerIssuerAndSerial o' -> putObject o'
+            SignerSubjectKeyIdentifier o' -> putExplicit 0 o'
     fromASN1 = runParseASN1State parser
-        where parser =  (fmap SignerSubjectKeyIdentifier <$> getExplicitMaybe 0)
-                       `orChoiceDefault`
-                       (SignerIssuerAndSerial <$> getObject)
+      where
+        parser = (fmap SignerSubjectKeyIdentifier <$> getExplicitMaybe 0)
+                 `orChoiceDefault`
+                 (SignerIssuerAndSerial <$> getObject)
 
 -- | Information about a single cryptographic signature.
 data Signer = Signer { signerVersion                   :: Version
@@ -228,7 +243,8 @@ data Signer = Signer { signerVersion                   :: Version
                      , signerSignatureAlgorithm        :: SignatureAlgorithmIdentifier
                      , signerSignature                 :: Signature
                      , signerUnauthenticatedAttributes :: Maybe [Attribute Any]
-                     } deriving (Eq, Show)
+                     }
+    deriving (Eq, Show)
 
 -- SignerInfo ::= SEQUENCE {
 --    version CMSVersion,
@@ -246,21 +262,23 @@ data Signer = Signer { signerVersion                   :: Version
 -- SignatureValue ::= OCTET STRING
 instance ASN1Structure Signer where
     toASN1Fields Signer{..} = runPrintASN1State printer
-        where printer = putObject signerVersion
-                        <> putObject signerIdentifier
-                        <> putObject signerDigestAlgorithm
-                        <> putImplicitMaybe 0 (SetOf <$> signerAuthenticatedAttributes)
-                        <> putObject signerSignatureAlgorithm
-                        <> putObject signerSignature
-                        <> putImplicitMaybe 1 (SetOf <$> signerUnauthenticatedAttributes)
+      where
+        printer = putObject signerVersion
+            <> putObject signerIdentifier
+            <> putObject signerDigestAlgorithm
+            <> putImplicitMaybe 0 (SetOf <$> signerAuthenticatedAttributes)
+            <> putObject signerSignatureAlgorithm
+            <> putObject signerSignature
+            <> putImplicitMaybe 1 (SetOf <$> signerUnauthenticatedAttributes)
     fromASN1Fields = runParseASN1State parser
-        where parser = Signer <$> getObject
-                              <*> getObject
-                              <*> getObject
-                              <*> (fmap unSetOf <$> getImplicitMaybe 0)
-                              <*> getObject
-                              <*> getObject
-                              <*> (fmap unSetOf <$> getImplicitMaybe 1)
+      where
+        parser = Signer <$> getObject
+                        <*> getObject
+                        <*> getObject
+                        <*> (fmap unSetOf <$> getImplicitMaybe 0)
+                        <*> getObject
+                        <*> getObject
+                        <*> (fmap unSetOf <$> getImplicitMaybe 1)
 
 instance ASN1Object Signer where
     toASN1 = toASN1Structure Sequence
@@ -274,7 +292,8 @@ data SignedData a = SignedData { signedVersion          :: Version
                                , signedCertificates     :: Maybe [CertificateChoice]
                                , signedCrls             :: Maybe [RevocationChoice]
                                , signedSigners          :: [Signer]
-                               } deriving (Eq, Show)
+                               }
+    deriving (Eq, Show)
 
 -- id-signedData OBJECT IDENTIFIER ::= { iso(1) member-body(2)
 --   us(840) rsadsi(113549) pkcs(1) pkcs7(7) 2 }
@@ -298,19 +317,21 @@ instance OIDable (SignedData a) where
 -- SignerInfos ::= SET OF SignerInfo
 instance ASN1Object a => ASN1Structure (SignedData a) where
     toASN1Fields SignedData{..} = runPrintASN1State printer
-        where printer = putObject signedVersion
-                        <> putSetOf signedDigestAlgorithms
-                        <> putObject signedContentInfo
-                        <> putImplicitMaybe 0 (SetOf <$> signedCertificates)
-                        <> putImplicitMaybe 1 (SetOf <$> signedCrls)
-                        <> putSetOf signedSigners
+      where
+        printer = putObject signedVersion
+            <> putSetOf signedDigestAlgorithms
+            <> putObject signedContentInfo
+            <> putImplicitMaybe 0 (SetOf <$> signedCertificates)
+            <> putImplicitMaybe 1 (SetOf <$> signedCrls)
+            <> putSetOf signedSigners
     fromASN1Fields = runParseASN1State parser
-        where parser = SignedData <$> getObject
-                                  <*> getSetOf
-                                  <*> getObject
-                                  <*> (fmap unSetOf <$> getImplicitMaybe 0)
-                                  <*> (fmap unSetOf <$> getImplicitMaybe 1)
-                                  <*> getSetOf
+      where
+        parser = SignedData <$> getObject
+                            <*> getSetOf
+                            <*> getObject
+                            <*> (fmap unSetOf <$> getImplicitMaybe 0)
+                            <*> (fmap unSetOf <$> getImplicitMaybe 1)
+                            <*> getSetOf
 
 instance ASN1Object a => ASN1Object (SignedData a) where
     toASN1 = toASN1Structure Sequence

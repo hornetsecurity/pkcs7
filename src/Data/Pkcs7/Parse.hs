@@ -6,21 +6,21 @@ This module is used internally for ASN1 parsing.
 -}
 module Data.Pkcs7.Parse
     ( module Data.ASN1.Parse
-    -- * Primitives
+      -- * Primitives
     , getOID
     , getIntVal
     , getBitString
     , getOctetString
     , getTime
     , getObjectMaybe
-    -- * Tagging
+      -- * Tagging
     , getExplicit
     , getExplicitMaybe
     , getImplicit
     , getImplicitMaybe
     , onContext
     , onContextMaybe
-    -- * Container
+      -- * Container
     , getSequenceOf
     , getSequenceOfMaybe
     , getSetOf
@@ -29,12 +29,12 @@ module Data.Pkcs7.Parse
     , orChoiceDefault
     ) where
 
-import           Control.Applicative (liftA2, (<|>))
+import           Control.Applicative ( (<|>), liftA2 )
 
-import           Data.ByteString     (ByteString)
-import           Data.Hourglass      (DateTime)
+import           Data.ByteString     ( ByteString )
+import           Data.Hourglass      ( DateTime )
 
-import           Data.ASN1.BitArray  (BitArray)
+import           Data.ASN1.BitArray  ( BitArray )
 import           Data.ASN1.Parse
 import           Data.Pkcs7.ASN1
 
@@ -48,36 +48,42 @@ instance ASN1Structure a => ASN1Object (Fields a) where
 -- | Extract an OBJECT IDENTIFIER from the ASN1 stream.
 getOID :: ParseASN1 OID
 getOID = getNext >>= toOID
-    where toOID (OID oid) = return oid
-          toOID _ = throwParseError "OBJECT IDENTIFIER expected"
+  where
+    toOID (OID oid) = return oid
+    toOID _ = throwParseError "OBJECT IDENTIFIER expected"
 
 -- | Extract an INTEGER from the ASN1 stream.
 getIntVal :: ParseASN1 Integer
 getIntVal = getNext >>= toIntVal
-    where toIntVal (IntVal int) = return int
-          toIntVal _ = throwParseError "INTEGER expected"
+  where
+    toIntVal (IntVal int) = return int
+    toIntVal _ = throwParseError "INTEGER expected"
 
 -- | Extract an BIT STRING from the ASN1 stream.
 getBitString :: ParseASN1 BitArray
 getBitString = getNext >>= toBitString
-    where toBitString (BitString int) = return int
-          toBitString _ = throwParseError "BIT STRING expected"
+  where
+    toBitString (BitString int) = return int
+    toBitString _ = throwParseError "BIT STRING expected"
 
 -- | Extract an OCTET STRING from the ASN1 stream.
 getOctetString :: ParseASN1 ByteString
 getOctetString = getNext >>= toOctetString
-    where toOctetString (OctetString int) = return int
-          toOctetString _ = throwParseError "OCTET STRING expected"
+  where
+    toOctetString (OctetString int) = return int
+    toOctetString _ = throwParseError "OCTET STRING expected"
 
 -- | Extract an GeneralizedTime from the ASN1 stream.
 getTime :: ParseASN1 DateTime
 getTime = getNext >>= toTime
-    where toTime (ASN1Time _ t _) = return t
-          toTime _ = throwParseError "GeneralizedTime expected"
+  where
+    toTime (ASN1Time _ t _) = return t
+    toTime _ = throwParseError "GeneralizedTime expected"
 
 -- | Extract an object from the ASN1 stream or nothing if the stream is empty.
 getObjectMaybe :: ASN1Object a => ParseASN1 (Maybe a)
-getObjectMaybe = hasNext >>= (\b -> if b then Just <$> getObject else return Nothing)
+getObjectMaybe = hasNext >>=
+    (\b -> if b then Just <$> getObject else return Nothing)
 
 -- | Extract the fields of an ASN1Structure from the ASN1 stream.
 getStructureFields :: ASN1Structure a => ParseASN1 a
@@ -100,7 +106,8 @@ getImplicit n = onNextContainer (Container Context n) getStructureFields
 -- | Extract an IMPLICIT tagged structured SEQUENCE object from the
 -- ASN1 stream or nothing if the next token is not the matching tag.
 getImplicitMaybe :: ASN1Structure a => Int -> ParseASN1 (Maybe a)
-getImplicitMaybe n = onNextContainerMaybe (Container Context n) getStructureFields
+getImplicitMaybe n = onNextContainerMaybe (Container Context n)
+                                          getStructureFields
 
 -- | Extract a CONTEXT tagged sequence of ASN1 objects from the
 -- ASN1 stream.

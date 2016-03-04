@@ -21,7 +21,7 @@ import           Data.Pkcs7.Types
 
 instance Monad m => Serial m MessageAuthenticationCodeAlgorithm where
     series = cons0 MessageAuthenticationCodeHMACSHA1
-             \/ decDepth (MessageAuthenticationCodeUnknown <$> oidSeries)
+        \/ decDepth (MessageAuthenticationCodeUnknown <$> oidSeries)
 
 instance Example MessageAuthenticationCodeAlgorithm where
     example = MessageAuthenticationCodeHMACSHA1
@@ -39,13 +39,20 @@ instance Serial m a => Serial m (AuthenticatedData a) where
                                <~> pure example
                                <~> elements [ Nothing, Just example ]
                                <~> series
-                               <~> elements [ Nothing, Just [], Just [ example ] ]
+                               <~> elements [ Nothing
+                                            , Just []
+                                            , Just [ example ]
+                                            ]
                                <~> pure example
-                               <~> elements [ Nothing, Just [], Just [ example ] ]
+                               <~> elements [ Nothing
+                                            , Just []
+                                            , Just [ example ]
+                                            ]
 
 testAuthenticatedData :: TestTree
-testAuthenticatedData = testGroup "Data.Pkcs7.AuthenticatedData"
-                        [ testProperty "MessageAuthenticationCodeAlgorithm" (propRoundtripOID :: MessageAuthenticationCodeAlgorithm -> Bool)
-                        , testProperty "MessageAuthenticationCode" (propRoundtripASN1 :: MessageAuthenticationCode -> Bool)
-                        , testProperty "AuthenticatedData" (propRoundtripASN1 :: AuthenticatedData Data -> Bool)
-                        ]
+testAuthenticatedData =
+    testGroup "Data.Pkcs7.AuthenticatedData"
+              [ testProperty "MessageAuthenticationCodeAlgorithm" (propRoundtripOID :: MessageAuthenticationCodeAlgorithm -> Bool)
+              , testProperty "MessageAuthenticationCode" (propRoundtripASN1 :: MessageAuthenticationCode -> Bool)
+              , testProperty "AuthenticatedData" (propRoundtripASN1 :: AuthenticatedData Data -> Bool)
+              ]

@@ -14,7 +14,7 @@ import           Tests.Internal
 
 import           Tests.X509             ()
 
-import           Data.ASN1.Types        (ASN1 (..), ASN1ConstructionType (..))
+import           Data.ASN1.Types        ( ASN1(..), ASN1ConstructionType(..) )
 import           Data.Pkcs7.Types
 
 instance Monad m => Serial m Data where
@@ -87,18 +87,19 @@ instance Example CRL where
     example = CRL example
 
 testTypes :: TestTree
-testTypes = testGroup "Data.Pkcs7.Types"
-            [ testProperty "Data" (propRoundtripASN1 :: Data -> Bool)
-            , testProperty "None" (propRoundtripASN1 :: None -> Bool)
-            , testProperty "Any" (propRoundtripASN1 :: Any -> Bool)
-            , testProperty "Version" (propRoundtripASN1 :: Version -> Bool)
-            , testProperty "ContentType" (propRoundtripASN1 :: ContentType -> Bool)
-            , testProperty "ContentInfo" (propRoundtripASN1 :: ContentInfo Data -> Bool)
-            , testProperty "Attribute" (propRoundtripASN1 :: Attribute Any -> Bool)
-            , testProperty "IssuerAndSerial" (propRoundtripASN1 :: IssuerAndSerial -> Bool)
-            , testProperty "Certificate" (propRoundtripASN1 :: Certificate -> Bool)
-            , testProperty "CRL" (propRoundtripASN1 :: CRL -> Bool)
-            ]
+testTypes =
+    testGroup "Data.Pkcs7.Types"
+              [ testProperty "Data" (propRoundtripASN1 :: Data -> Bool)
+              , testProperty "None" (propRoundtripASN1 :: None -> Bool)
+              , testProperty "Any" (propRoundtripASN1 :: Any -> Bool)
+              , testProperty "Version" (propRoundtripASN1 :: Version -> Bool)
+              , testProperty "ContentType" (propRoundtripASN1 :: ContentType -> Bool)
+              , testProperty "ContentInfo" (propRoundtripASN1 :: ContentInfo Data -> Bool)
+              , testProperty "Attribute" (propRoundtripASN1 :: Attribute Any -> Bool)
+              , testProperty "IssuerAndSerial" (propRoundtripASN1 :: IssuerAndSerial -> Bool)
+              , testProperty "Certificate" (propRoundtripASN1 :: Certificate -> Bool)
+              , testProperty "CRL" (propRoundtripASN1 :: CRL -> Bool)
+              ]
 
 
 

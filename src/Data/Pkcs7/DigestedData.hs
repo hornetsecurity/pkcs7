@@ -12,7 +12,7 @@ module Data.Pkcs7.DigestedData
     , DigestedData(..)
     ) where
 
-import           Data.ByteString  (ByteString)
+import           Data.ByteString  ( ByteString )
 
 import           Data.Pkcs7.ASN1
 import           Data.Pkcs7.Parse
@@ -31,7 +31,7 @@ data DigestAlgorithm = DigestMD2
                      | DigestSHA512
                      | DigestSHA224
                      | DigestUnknown OID
-                       deriving (Eq, Show)
+    deriving (Eq, Show)
 
 daTable :: OIDTable DigestAlgorithm
 daTable = [ (DigestMD2, oidMD2)
@@ -57,9 +57,11 @@ newtype Digest = Digest ByteString
 -- Digest ::= OCTET STRING
 instance ASN1Object Digest where
     toASN1 (Digest bs) = runPrintASN1State printer
-        where printer = putOctetString bs
+      where
+        printer = putOctetString bs
     fromASN1 = runParseASN1State parser
-        where parser = Digest <$> getOctetString
+      where
+        parser = Digest <$> getOctetString
 
 type DigestAlgorithmIdentifier = AlgorithmIdentifier DigestAlgorithm
 
@@ -67,7 +69,8 @@ data DigestedData a = DigestedData { digestedVersion   :: Version
                                    , digestedAlgorithm :: DigestAlgorithmIdentifier
                                    , digestedContent   :: ContentInfo a
                                    , digestedDigest    :: Digest
-                                   } deriving (Eq, Show)
+                                   }
+    deriving (Eq, Show)
 
 instance OIDable (DigestedData a) where
     getObjectID _ = oidDigestedData
@@ -79,18 +82,18 @@ instance OIDable (DigestedData a) where
 --   digest Digest }
 instance ASN1Object a => ASN1Structure (DigestedData a) where
     toASN1Fields DigestedData{..} = runPrintASN1State printer
-        where printer = putObject digestedVersion
-                        <> putObject digestedAlgorithm
-                        <> putObject digestedContent
-                        <> putObject digestedDigest
+      where
+        printer = putObject digestedVersion
+            <> putObject digestedAlgorithm
+            <> putObject digestedContent
+            <> putObject digestedDigest
     fromASN1Fields = runParseASN1State parser
-        where parser = DigestedData <$> getObject
-                                    <*> getObject
-                                    <*> getObject
-                                    <*> getObject
+      where
+        parser = DigestedData <$> getObject
+                              <*> getObject
+                              <*> getObject
+                              <*> getObject
 
 instance ASN1Object a => ASN1Object (DigestedData a) where
     toASN1 = toASN1Structure Sequence
     fromASN1 = fromASN1Structure Sequence
-
-

@@ -32,6 +32,12 @@ instance Monad m => Serial m ContentEncryptionAlgorithm where
 instance Example ContentEncryptionAlgorithm where
     example = ContentEncryptionAES128CBC
 
+instance Monad m => Serial m CCMParameters where
+    series = decDepth $ CCMParameters <$> series <~> series
+
+instance Monad m => Serial m GCMParameters where
+    series = decDepth $ GCMParameters <$> series <~> series
+
 instance Monad m => Serial m EncryptedContent where
     series = decDepth $ EncryptedContent <$> series <~> pure example <~> series
 
@@ -45,6 +51,8 @@ testEncryptedData :: TestTree
 testEncryptedData =
     testGroup "Data.Pkcs7.EncryptedData"
               [ testProperty "ContentEncryptionAlgorithm" (propRoundtripOID :: ContentEncryptionAlgorithm -> Bool)
+              , testProperty "CCMParameters" (propRoundtripASN1 :: CCMParameters -> Bool)
+              , testProperty "GCMParameters" (propRoundtripASN1 :: GCMParameters -> Bool)
               , testProperty "EncryptedContent" (propRoundtripASN1 :: EncryptedContent -> Bool)
               , testProperty "EncryptedData" (propRoundtripASN1 :: EncryptedData -> Bool)
               ]

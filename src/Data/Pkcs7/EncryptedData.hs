@@ -8,9 +8,14 @@ Data types for encrypted data in PKCS#7.
 module Data.Pkcs7.EncryptedData
     ( ContentEncryptionAlgorithm(..)
     , ContentEncryptionAlgorithmIdentifier
+    , CCMParameters(..)
+    , GCMParameters(..)
     , EncryptedContent(..)
     , EncryptedData(..)
     ) where
+
+import           Data.ByteString  ( ByteString )
+import           Data.Maybe       ( fromMaybe )
 
 import           Data.Pkcs7.ASN1
 import           Data.Pkcs7.Parse
@@ -58,6 +63,58 @@ instance OIDNameable ContentEncryptionAlgorithm where
     fromObjectID = Just . fromOID ContentEncryptionUnknown ceaTable
 
 type ContentEncryptionAlgorithmIdentifier = AlgorithmIdentifier ContentEncryptionAlgorithm
+
+data CCMParameters = CCMParameters { ccmParametersNonce     :: ByteString
+                                   , ccmParametersICVLength :: Integer
+                                   }
+    deriving (Eq, Show)
+
+-- CCMParameters ::= SEQUENCE {
+--   aes-nonce         OCTET STRING (SIZE(7..13)),
+--   aes-ICVlen        AES-CCM-ICVlen DEFAULT 12 }
+--
+-- AES-CCM-ICVlen ::= INTEGER (4 | 6 | 8 | 10 | 12 | 14 | 16)
+instance ASN1Structure CCMParameters where
+    toASN1Fields CCMParameters{..} = runPrintASN1State printer
+      where
+        printer = putOctetString ccmParametersNonce
+            <> putIntVal ccmParametersICVLength
+    fromASN1Fields = runParseASN1State parser
+      where
+        parser = CCMParameters <$> getOctetString
+                               <*> (fromMaybe 12 <$> getNextMaybe toInt)
+        toInt (IntVal n) = Just n
+        toInt _ = Nothing
+
+instance ASN1Object CCMParameters where
+    toASN1 = toASN1Structure Sequence
+    fromASN1 = fromASN1Structure Sequence
+
+data GCMParameters = GCMParameters { gcmParametersNonce     :: ByteString
+                                   , gcmParametersICVLength :: Integer
+                                   }
+    deriving (Eq, Show)
+
+-- GCMParameters ::= SEQUENCE {
+--   aes-nonce        OCTET STRING, -- recommended size is 12 octets
+--   aes-ICVlen       AES-GCM-ICVlen DEFAULT 12 }
+--
+-- AES-GCM-ICVlen ::= INTEGER (12 | 13 | 14 | 15 | 16)
+instance ASN1Structure GCMParameters where
+    toASN1Fields GCMParameters{..} = runPrintASN1State printer
+      where
+        printer = putOctetString gcmParametersNonce
+            <> putIntVal gcmParametersICVLength
+    fromASN1Fields = runParseASN1State parser
+      where
+        parser = GCMParameters <$> getOctetString
+                               <*> (fromMaybe 12 <$> getNextMaybe toInt)
+        toInt (IntVal n) = Just n
+        toInt _ = Nothing
+
+instance ASN1Object GCMParameters where
+    toASN1 = toASN1Structure Sequence
+    fromASN1 = fromASN1Structure Sequence
 
 data EncryptedContent =
     EncryptedContent { encryptedContentType                :: ContentType

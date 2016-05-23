@@ -100,6 +100,3 @@ testTypes =
               , testProperty "Certificate" (propRoundtripASN1 :: Certificate -> Bool)
               , testProperty "CRL" (propRoundtripASN1 :: CRL -> Bool)
               ]
-
-
-

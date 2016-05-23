@@ -106,8 +106,8 @@ getImplicit n = onNextContainer (Container Context n) getStructureFields
 -- | Extract an IMPLICIT tagged structured SEQUENCE object from the
 -- ASN1 stream or nothing if the next token is not the matching tag.
 getImplicitMaybe :: ASN1Structure a => Int -> ParseASN1 (Maybe a)
-getImplicitMaybe n = onNextContainerMaybe (Container Context n)
-                                          getStructureFields
+getImplicitMaybe n =
+    onNextContainerMaybe (Container Context n) getStructureFields
 
 -- | Extract a CONTEXT tagged sequence of ASN1 objects from the
 -- ASN1 stream.

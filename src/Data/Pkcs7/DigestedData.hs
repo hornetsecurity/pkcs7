@@ -65,11 +65,12 @@ instance ASN1Object Digest where
 
 type DigestAlgorithmIdentifier = AlgorithmIdentifier DigestAlgorithm
 
-data DigestedData a = DigestedData { digestedVersion   :: Version
-                                   , digestedAlgorithm :: DigestAlgorithmIdentifier
-                                   , digestedContent   :: ContentInfo a
-                                   , digestedDigest    :: Digest
-                                   }
+data DigestedData a =
+    DigestedData { digestedVersion   :: Version
+                 , digestedAlgorithm :: DigestAlgorithmIdentifier
+                 , digestedContent   :: ContentInfo a
+                 , digestedDigest    :: Digest
+                 }
     deriving (Eq, Show)
 
 instance OIDable (DigestedData a) where
@@ -89,10 +90,8 @@ instance ASN1Object a => ASN1Structure (DigestedData a) where
             <> putObject digestedDigest
     fromASN1Fields = runParseASN1State parser
       where
-        parser = DigestedData <$> getObject
-                              <*> getObject
-                              <*> getObject
-                              <*> getObject
+        parser =
+            DigestedData <$> getObject <*> getObject <*> getObject <*> getObject
 
 instance ASN1Object a => ASN1Object (DigestedData a) where
     toASN1 = toASN1Structure Sequence

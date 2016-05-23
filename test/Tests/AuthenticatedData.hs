@@ -33,21 +33,16 @@ instance Example MessageAuthenticationCode where
     example = MessageAuthenticationCode "deadbeef"
 
 instance Serial m a => Serial m (AuthenticatedData a) where
-    series = AuthenticatedData <$> pure example
-                               <~> elements [ Nothing, Just example ]
-                               <~> elements [ [], [ example ] ]
-                               <~> pure example
-                               <~> elements [ Nothing, Just example ]
-                               <~> series
-                               <~> elements [ Nothing
-                                            , Just []
-                                            , Just [ example ]
-                                            ]
-                               <~> pure example
-                               <~> elements [ Nothing
-                                            , Just []
-                                            , Just [ example ]
-                                            ]
+    series =
+        AuthenticatedData <$> pure example
+                          <~> elements [ Nothing, Just example ]
+                          <~> elements [ [], [ example ] ]
+                          <~> pure example
+                          <~> elements [ Nothing, Just example ]
+                          <~> series
+                          <~> elements [ Nothing, Just [], Just [ example ] ]
+                          <~> pure example
+                          <~> elements [ Nothing, Just [], Just [ example ] ]
 
 testAuthenticatedData :: TestTree
 testAuthenticatedData =

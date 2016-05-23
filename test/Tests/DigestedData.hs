@@ -48,6 +48,3 @@ testDigestedData =
               , testProperty "Digest" (propRoundtripASN1 :: Digest -> Bool)
               , testProperty "DigestedData" (propRoundtripASN1 :: DigestedData Data -> Bool)
               ]
-
-
-

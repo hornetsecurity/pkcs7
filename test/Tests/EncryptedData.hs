@@ -48,6 +48,3 @@ testEncryptedData =
               , testProperty "EncryptedContent" (propRoundtripASN1 :: EncryptedContent -> Bool)
               , testProperty "EncryptedData" (propRoundtripASN1 :: EncryptedData -> Bool)
               ]
-
-
-

@@ -216,24 +216,28 @@ testEnvelopedData =
               , testProperty "Recipient" (propRoundtripASN1 :: Recipient -> Bool)
               , testProperty "EnvelopedData" (propRoundtripASN1 :: EnvelopedData -> Bool)
               , testCase "EnvelopedData Sample" $
-                case decodeDER sampleEnvelopedData of
-                    Left e -> assertFailure e
-                    Right ci ->
-                        case contentContent ci of
-                            Nothing -> assertFailure "EnvelopedData value is missing"
-                            Just EnvelopedData{..} -> do
-                                contentContentType ci @?= ContentType oidEnvelopedData
+                  case decodeDER sampleEnvelopedData of
+                      Left e -> assertFailure e
+                      Right ci -> case contentContent ci of
+                          Nothing ->
+                              assertFailure "EnvelopedData value is missing"
+                          Just EnvelopedData{..} -> do
+                              contentContentType ci @?=
+                                  ContentType oidEnvelopedData
 
-                                envelopedVersion @?= Version 0
-                                envelopedOriginator @?= Nothing
-                                length envelopedRecipients @?= 1
-                                envelopedUnprotectedAttributes @?= Nothing
+                              envelopedVersion @?= Version 0
+                              envelopedOriginator @?= Nothing
+                              length envelopedRecipients @?= 1
+                              envelopedUnprotectedAttributes @?= Nothing
 
-                                let EncryptedContent{..} = envelopedEncryptedContent
-                                encryptedContentType @?= ContentType oidData
-                                algorithm encryptedContentEncryptionAlgorithm @?= ContentEncryptionDESCBC
+                              let EncryptedContent{..} =
+                                      envelopedEncryptedContent
+                              encryptedContentType @?= ContentType oidData
+                              algorithm encryptedContentEncryptionAlgorithm @?=
+                                  ContentEncryptionDESCBC
 
-                                case algorithmParameters encryptedContentEncryptionAlgorithm of
-                                    Just (Any [ASN1.OctetString bs]) -> BS.length bs @?= 8
-                                    _ -> assertFailure "Invalid DES-CBC algorithm parameters"
+                              case algorithmParameters encryptedContentEncryptionAlgorithm of
+                                  Just (Any [ ASN1.OctetString bs ]) ->
+                                      BS.length bs @?= 8
+                                  _ -> assertFailure "Invalid DES-CBC algorithm parameters"
               ]

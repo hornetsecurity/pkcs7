@@ -36,19 +36,18 @@ import           Data.Pkcs7.DigestedData ( DigestAlgorithm(..)
                                          , DigestAlgorithmIdentifier )
 
 -- | Asymmetric algorithms to encrypt message digests.
-data SignatureAlgorithm =
-      SignatureDSA
-    | SignatureSHA1WithDSA
-    | SignatureRSA
-    | SignatureMD2WithRSA
-    | SignatureMD4WithRSA
-    | SignatureMD5WithRSA
-    | SignatureSHA1WithRSA
-    | SignatureSHA256WithRSA
-    | SignatureSHA384WithRSA
-    | SignatureSHA512WithRSA
-    | SignatureSHA224WithRSA
-    | SignatureUnknown OID
+data SignatureAlgorithm = SignatureDSA
+                        | SignatureSHA1WithDSA
+                        | SignatureRSA
+                        | SignatureMD2WithRSA
+                        | SignatureMD4WithRSA
+                        | SignatureMD5WithRSA
+                        | SignatureSHA1WithRSA
+                        | SignatureSHA256WithRSA
+                        | SignatureSHA384WithRSA
+                        | SignatureSHA512WithRSA
+                        | SignatureSHA224WithRSA
+                        | SignatureUnknown OID
     deriving (Eq, Show)
 
 saTable :: OIDTable SignatureAlgorithm
@@ -92,10 +91,10 @@ instance ASN1Object Signature where
 
 -- | Extended certificates.
 data ExtendedCertificate =
-      ExtendedCertificate { extendedCertificateVersion                   :: Version
-                          , extendedCertificateCertificate               :: Certificate
-                          , extendedCertificateUnauthenticatedAttributes :: [Attribute Any]
-                          }
+    ExtendedCertificate { extendedCertificateVersion                   :: Version
+                        , extendedCertificateCertificate               :: Certificate
+                        , extendedCertificateUnauthenticatedAttributes :: [Attribute Any]
+                        }
     deriving (Eq, Show)
 
 -- ExtendedCertificateInfo ::= SEQUENCE {
@@ -119,10 +118,11 @@ instance ASN1Object ExtendedCertificate where
     fromASN1 = fromASN1Structure Sequence
 
 -- | ASN.1 object with an accompanying cryptographics signature.
-data Signed a = Signed { signedObject             :: a
-                       , signedSignatureAlgorithm :: SignatureAlgorithmIdentifier
-                       , signedSignature          :: BitArray
-                       }
+data Signed a =
+    Signed { signedObject             :: a
+           , signedSignatureAlgorithm :: SignatureAlgorithmIdentifier
+           , signedSignature          :: BitArray
+           }
     deriving (Eq, Show)
 
 instance ASN1Object a => ASN1Structure (Signed a) where
@@ -140,12 +140,11 @@ instance ASN1Object a => ASN1Object (Signed a) where
     fromASN1 = fromASN1Structure Sequence
 
 -- | Different options for including certificates within SignedData.
-data CertificateChoice =
-      CertificateCertificate (Signed Certificate)
-    | CertificateExtended (Signed ExtendedCertificate)
-    | CertificateAttributeCertificateV1 (Signed Any)
-    | CertificateAttributeCertificateV2 (Signed Any)
-    | CertificateOther OID Any
+data CertificateChoice = CertificateCertificate (Signed Certificate)
+                       | CertificateExtended (Signed ExtendedCertificate)
+                       | CertificateAttributeCertificateV1 (Signed Any)
+                       | CertificateAttributeCertificateV2 (Signed Any)
+                       | CertificateOther OID Any
     deriving (Eq, Show)
 
 -- CertificateChoices ::= CHOICE {
@@ -236,14 +235,15 @@ instance ASN1Object SignerIdentifier where
                  (SignerIssuerAndSerial <$> getObject)
 
 -- | Information about a single cryptographic signature.
-data Signer = Signer { signerVersion                   :: Version
-                     , signerIdentifier                :: SignerIdentifier
-                     , signerDigestAlgorithm           :: DigestAlgorithmIdentifier
-                     , signerAuthenticatedAttributes   :: Maybe [Attribute Any]
-                     , signerSignatureAlgorithm        :: SignatureAlgorithmIdentifier
-                     , signerSignature                 :: Signature
-                     , signerUnauthenticatedAttributes :: Maybe [Attribute Any]
-                     }
+data Signer =
+    Signer { signerVersion                   :: Version
+           , signerIdentifier                :: SignerIdentifier
+           , signerDigestAlgorithm           :: DigestAlgorithmIdentifier
+           , signerAuthenticatedAttributes   :: Maybe [Attribute Any]
+           , signerSignatureAlgorithm        :: SignatureAlgorithmIdentifier
+           , signerSignature                 :: Signature
+           , signerUnauthenticatedAttributes :: Maybe [Attribute Any]
+           }
     deriving (Eq, Show)
 
 -- SignerInfo ::= SEQUENCE {
@@ -286,13 +286,14 @@ instance ASN1Object Signer where
 
 -- | Representation of arbitrary data, verifiable by zero or more
 -- cryptographic signatures.
-data SignedData a = SignedData { signedVersion          :: Version
-                               , signedDigestAlgorithms :: [DigestAlgorithmIdentifier]
-                               , signedContentInfo      :: ContentInfo a
-                               , signedCertificates     :: Maybe [CertificateChoice]
-                               , signedCrls             :: Maybe [RevocationChoice]
-                               , signedSigners          :: [Signer]
-                               }
+data SignedData a =
+    SignedData { signedVersion          :: Version
+               , signedDigestAlgorithms :: [DigestAlgorithmIdentifier]
+               , signedContentInfo      :: ContentInfo a
+               , signedCertificates     :: Maybe [CertificateChoice]
+               , signedCrls             :: Maybe [RevocationChoice]
+               , signedSigners          :: [Signer]
+               }
     deriving (Eq, Show)
 
 -- id-signedData OBJECT IDENTIFIER ::= { iso(1) member-body(2)

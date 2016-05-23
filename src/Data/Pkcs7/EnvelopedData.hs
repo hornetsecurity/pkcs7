@@ -56,9 +56,8 @@ import           Data.Pkcs7.SignedData    ( CertificateChoice(..)
                                           , SubjectKeyIdentifier(..) )
 
 -- | Asymmetric algorithms to encrypt symmetric encryption keys.
-data KeyEncryptionAlgorithm =
-      KeyEncryptionRSA
-    | KeyEncryptionUnknown OID
+data KeyEncryptionAlgorithm = KeyEncryptionRSA
+                            | KeyEncryptionUnknown OID
     deriving (Eq, Show)
 
 keaTable :: OIDTable KeyEncryptionAlgorithm
@@ -74,10 +73,9 @@ instance OIDNameable KeyEncryptionAlgorithm where
 type KeyEncryptionAlgorithmIdentifier = AlgorithmIdentifier KeyEncryptionAlgorithm
 
 -- | Algorithms for key agreement.
-data KeyAgreementAlgorithm =
-      KeyAgreementESDH
-    | KeyAgreementSSDH
-    | KeyAgreementUnknown OID
+data KeyAgreementAlgorithm = KeyAgreementESDH
+                           | KeyAgreementSSDH
+                           | KeyAgreementUnknown OID
     deriving (Eq, Show)
 
 kaaTable :: OIDTable KeyAgreementAlgorithm
@@ -111,9 +109,8 @@ instance OIDNameable KeyWrapAlgorithm where
 type KeyWrapAlgorithmIdentifier = AlgorithmIdentifier KeyWrapAlgorithm
 
 -- | Algorithms to derive keys from passwords.
-data KeyDerivationAlgorithm =
-      KeyDerivationPBKDF2
-    | KeyDerivationUnknown OID
+data KeyDerivationAlgorithm = KeyDerivationPBKDF2
+                            | KeyDerivationUnknown OID
     deriving (Eq, Show)
 
 kdaTable :: OIDTable KeyDerivationAlgorithm
@@ -172,16 +169,18 @@ instance ASN1Object KeyTransportRecipientIdentifier where
             KeyTransportRecipientSubjectKeyIdentifier o' -> putExplicit 0 o'
     fromASN1 = runParseASN1State parser
       where
-        parser = (fmap KeyTransportRecipientSubjectKeyIdentifier <$> getExplicitMaybe 0)
-                 `orChoiceDefault`
-                 (KeyTransportRecipientIssuerAndSerial <$> getObject)
+        parser =
+            (fmap KeyTransportRecipientSubjectKeyIdentifier <$> getExplicitMaybe 0)
+            `orChoiceDefault`
+            (KeyTransportRecipientIssuerAndSerial <$> getObject)
 
 -- | Key transport information.
-data KeyTransport = KeyTransport { keyTransportVersion             :: Version
-                                 , keyTransportRecipient           :: KeyTransportRecipientIdentifier
-                                 , keyTransportEncryptionAlgorithm :: KeyEncryptionAlgorithmIdentifier
-                                 , keyTransportEncryptedKey        :: EncryptedKey
-                                 }
+data KeyTransport =
+    KeyTransport { keyTransportVersion             :: Version
+                 , keyTransportRecipient           :: KeyTransportRecipientIdentifier
+                 , keyTransportEncryptionAlgorithm :: KeyEncryptionAlgorithmIdentifier
+                 , keyTransportEncryptedKey        :: EncryptedKey
+                 }
     deriving (Eq, Show)
 
 -- KeyTransRecipientInfo ::= SEQUENCE {
@@ -198,19 +197,17 @@ instance ASN1Structure KeyTransport where
             <> putObject keyTransportEncryptedKey
     fromASN1Fields = runParseASN1State parser
       where
-        parser = KeyTransport <$> getObject
-                              <*> getObject
-                              <*> getObject
-                              <*> getObject
+        parser =
+            KeyTransport <$> getObject <*> getObject <*> getObject <*> getObject
 
 instance ASN1Object KeyTransport where
     toASN1 = toASN1Structure Sequence
     fromASN1 = fromASN1Structure Sequence
 
 data OriginatorPublicKey =
-      OriginatorPublicKey { originatorPublicKeyAlgorithm :: SignatureAlgorithmIdentifier
-                          , originatorPublicKey          :: BitArray
-                          }
+    OriginatorPublicKey { originatorPublicKeyAlgorithm :: SignatureAlgorithmIdentifier
+                        , originatorPublicKey          :: BitArray
+                        }
     deriving (Eq, Show)
 
 -- OriginatorPublicKey ::= SEQUENCE {
@@ -282,14 +279,15 @@ instance ASN1Object KeyAgreementRecipientIdentifier where
             KeyAgreementRecipientIdentifierKeyIdentifier o' -> putImplicit 0 o'
     fromASN1 = runParseASN1State parser
       where
-        parser = (fmap KeyAgreementRecipientIdentifierKeyIdentifier <$> getImplicitMaybe 0)
-                 `orChoiceDefault`
-                 (KeyAgreementRecipientIdentifierIssuerAndSerial <$> getObject)
+        parser =
+            (fmap KeyAgreementRecipientIdentifierKeyIdentifier <$> getImplicitMaybe 0)
+            `orChoiceDefault`
+            (KeyAgreementRecipientIdentifierIssuerAndSerial <$> getObject)
 
 data RecipientEncryptedKey =
-      RecipientEncryptedKey { recipientEncryptedKeyIdentifier :: KeyAgreementRecipientIdentifier
-                            , recipientEncryptedKey           :: EncryptedKey
-                            }
+    RecipientEncryptedKey { recipientEncryptedKeyIdentifier :: KeyAgreementRecipientIdentifier
+                          , recipientEncryptedKey           :: EncryptedKey
+                          }
     deriving (Eq, Show)
 
 -- RecipientEncryptedKey ::= SEQUENCE {
@@ -308,12 +306,13 @@ instance ASN1Object RecipientEncryptedKey where
     toASN1 = toASN1Structure Sequence
     fromASN1 = fromASN1Structure Sequence
 
-data KeyAgreement = KeyAgreement { keyAgreementVersion                :: Version
-                                 , keyAgreementOriginator             :: OriginatorIdentifierOrKey
-                                 , keyAgreementUserKeyingMaterial     :: Maybe UserKeyingMaterial
-                                 , keyAgreementEncryptionAlgorithm    :: KeyAgreementAlgorithmIdentifier
-                                 , keyAgreementRecipientEncryptedKeys :: [RecipientEncryptedKey]
-                                 }
+data KeyAgreement =
+    KeyAgreement { keyAgreementVersion                :: Version
+                 , keyAgreementOriginator             :: OriginatorIdentifierOrKey
+                 , keyAgreementUserKeyingMaterial     :: Maybe UserKeyingMaterial
+                 , keyAgreementEncryptionAlgorithm    :: KeyAgreementAlgorithmIdentifier
+                 , keyAgreementRecipientEncryptedKeys :: [RecipientEncryptedKey]
+                 }
     deriving (Eq, Show)
 
 -- KeyAgreeRecipientInfo ::= SEQUENCE {
@@ -345,10 +344,10 @@ instance ASN1Object KeyAgreement where
     fromASN1 = fromASN1Structure Sequence
 
 data RecipientKeyIdentifier =
-      RecipientKeyIdentifier { recipientKeyIdentifier :: SubjectKeyIdentifier
-                             , recipientKeyTime       :: Maybe DateTime
-                             , recipientKeyAttribute  :: Maybe (OtherKeyAttribute Any)
-                             }
+    RecipientKeyIdentifier { recipientKeyIdentifier :: SubjectKeyIdentifier
+                           , recipientKeyTime       :: Maybe DateTime
+                           , recipientKeyAttribute  :: Maybe (OtherKeyAttribute Any)
+                           }
     deriving (Eq, Show)
 
 -- RecipientKeyIdentifier ::= SEQUENCE {
@@ -373,10 +372,9 @@ instance ASN1Object RecipientKeyIdentifier where
     toASN1 = toASN1Structure Sequence
     fromASN1 = fromASN1Structure Sequence
 
-data OtherKeyAttribute a =
-      OtherKeyAttribute { keyAttributeIdentifier :: OID
-                        , keyAttributeValue      :: Maybe a
-                        }
+data OtherKeyAttribute a = OtherKeyAttribute { keyAttributeIdentifier :: OID
+                                             , keyAttributeValue      :: Maybe a
+                                             }
     deriving (Eq, Show)
 
 -- OtherKeyAttribute ::= SEQUENCE {
@@ -395,10 +393,11 @@ instance ASN1Object a => ASN1Object (OtherKeyAttribute a) where
     toASN1 = toASN1Structure Sequence
     fromASN1 = fromASN1Structure Sequence
 
-data KEKIdentifier = KEKIdentifier { kekIdentifierValue :: ByteString
-                                   , kekIdentifierTime  :: Maybe DateTime
-                                   , kekIdentifierOther :: Maybe (OtherKeyAttribute Any)
-                                   }
+data KEKIdentifier =
+    KEKIdentifier { kekIdentifierValue :: ByteString
+                  , kekIdentifierTime  :: Maybe DateTime
+                  , kekIdentifierOther :: Maybe (OtherKeyAttribute Any)
+                  }
     deriving (Eq, Show)
 
 -- KEKIdentifier ::= SEQUENCE {
@@ -462,11 +461,12 @@ instance ASN1Object EncryptedKey where
       where
         parser = EncryptedKey <$> getOctetString
 
-data Password = Password { passwordVersion                :: Version
-                         , passwordKeyDerivationAlgorithm :: Maybe KeyDerivationAlgorithmIdentifier
-                         , passwordEncryptionAlgorithm    :: KeyEncryptionAlgorithmIdentifier
-                         , passwordEncryptedKey           :: EncryptedKey
-                         }
+data Password =
+    Password { passwordVersion                :: Version
+             , passwordKeyDerivationAlgorithm :: Maybe KeyDerivationAlgorithmIdentifier
+             , passwordEncryptionAlgorithm    :: KeyEncryptionAlgorithmIdentifier
+             , passwordEncryptedKey           :: EncryptedKey
+             }
     deriving (Eq, Show)
 
 -- PasswordRecipientInfo ::= SEQUENCE {
@@ -530,12 +530,13 @@ instance ASN1Object Recipient where
                  `orChoiceDefault`
                  (RecipientKeyTransport <$> getObject)
 
-data EnvelopedData = EnvelopedData { envelopedVersion               :: Version
-                                   , envelopedOriginator            :: Maybe Originator
-                                   , envelopedRecipients            :: [Recipient]
-                                   , envelopedEncryptedContent      :: EncryptedContent
-                                   , envelopedUnprotectedAttributes :: Maybe [Attribute Data]
-                                   }
+data EnvelopedData =
+    EnvelopedData { envelopedVersion               :: Version
+                  , envelopedOriginator            :: Maybe Originator
+                  , envelopedRecipients            :: [Recipient]
+                  , envelopedEncryptedContent      :: EncryptedContent
+                  , envelopedUnprotectedAttributes :: Maybe [Attribute Data]
+                  }
     deriving (Eq, Show)
 
 -- id-envelopedData OBJECT IDENTIFIER ::= { iso(1) member-body(2)

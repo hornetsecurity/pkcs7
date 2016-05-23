@@ -65,10 +65,9 @@ data Any = Any [ASN1]
 
 instance ASN1Object Any where
     toASN1 (Any l) = (l ++)
-    fromASN1 (Start t : xs) =
-        let (s, xs') = getConstructedEnd 0 xs
-        in
-            Right (Any (Start t : (s ++ [ End t ])), xs')
+    fromASN1 (Start t : xs) = let (s, xs') = getConstructedEnd 0 xs
+                              in
+                                  Right (Any (Start t : (s ++ [ End t ])), xs')
     fromASN1 (x : xs) = Right (Any [ x ], xs)
     fromASN1 [] = Right (Any [], [])
 
@@ -129,9 +128,9 @@ instance ASN1Object a => ASN1Object (ContentInfo a) where
 -- encryption, content encryption, message authentication, and key
 -- derivation.
 data AlgorithmIdentifier a =
-      AlgorithmIdentifier { algorithm           :: a
-                          , algorithmParameters :: Maybe Any
-                          }
+    AlgorithmIdentifier { algorithm           :: a
+                        , algorithmParameters :: Maybe Any
+                        }
     deriving (Eq, Show)
 
 -- AlgorithmIdentifier  ::=  SEQUENCE {
@@ -180,9 +179,10 @@ instance ASN1Object a => ASN1Object (Attribute a) where
     fromASN1 = fromASN1Structure Sequence
 
 -- | Identifying a signer via the certificate issuer and serial number.
-data IssuerAndSerial = IssuerAndSerial { issuerName   :: Data.X509.DistinguishedName
-                                       , issuerSerial :: Integer
-                                       }
+data IssuerAndSerial =
+    IssuerAndSerial { issuerName   :: Data.X509.DistinguishedName
+                    , issuerSerial :: Integer
+                    }
     deriving (Eq, Show)
 
 -- IssuerAndSerialNumber ::= SEQUENCE {

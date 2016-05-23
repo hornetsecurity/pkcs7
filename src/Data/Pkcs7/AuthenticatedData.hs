@@ -25,9 +25,8 @@ import           Data.Pkcs7.Types
 import           Data.Pkcs7.EnvelopedData ( Originator(..), Recipient(..) )
 import           Data.Pkcs7.SignedData    ( DigestAlgorithmIdentifier )
 
-data MessageAuthenticationCodeAlgorithm =
-      MessageAuthenticationCodeHMACSHA1
-    | MessageAuthenticationCodeUnknown OID
+data MessageAuthenticationCodeAlgorithm = MessageAuthenticationCodeHMACSHA1
+                                        | MessageAuthenticationCodeUnknown OID
     deriving (Eq, Show)
 
 maaTable :: OIDTable MessageAuthenticationCodeAlgorithm
@@ -60,16 +59,16 @@ instance ASN1Object MessageAuthenticationCode where
         parser = MessageAuthenticationCode <$> getOctetString
 
 data AuthenticatedData a =
-      AuthenticatedData { authenticatedVersion          :: Version
-                        , authenticatedOriginator       :: Maybe Originator
-                        , authenticatedRecipients       :: [Recipient]
-                        , authenticatedMacAlgorithm     :: MessageAuthenticationCodeAlgorithmIdentifier
-                        , authenticatedDigestAlgorithm  :: Maybe DigestAlgorithmIdentifier
-                        , authenticatedContent          :: ContentInfo a
-                        , authenticatedAuthAttributes   :: Maybe [Attribute Any]
-                        , authenticatedMac              :: MessageAuthenticationCode
-                        , authenticatedUnauthAttributes :: Maybe [Attribute Any]
-                        }
+    AuthenticatedData { authenticatedVersion          :: Version
+                      , authenticatedOriginator       :: Maybe Originator
+                      , authenticatedRecipients       :: [Recipient]
+                      , authenticatedMacAlgorithm     :: MessageAuthenticationCodeAlgorithmIdentifier
+                      , authenticatedDigestAlgorithm  :: Maybe DigestAlgorithmIdentifier
+                      , authenticatedContent          :: ContentInfo a
+                      , authenticatedAuthAttributes   :: Maybe [Attribute Any]
+                      , authenticatedMac              :: MessageAuthenticationCode
+                      , authenticatedUnauthAttributes :: Maybe [Attribute Any]
+                      }
     deriving (Eq, Show)
 
 -- AuthenticatedData ::= SEQUENCE {

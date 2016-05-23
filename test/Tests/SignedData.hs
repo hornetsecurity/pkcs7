@@ -172,28 +172,35 @@ testSignedData =
               , testProperty "Signer" (propRoundtripASN1 :: Signer -> Bool)
               , testProperty "SignedData" (propRoundtripASN1 :: SignedData Data -> Bool)
               , testCase "SingedData Sample" $
-                case decodeDER sampleSignedData of
-                    Left e -> assertFailure e
-                    Right ci ->
-                        case contentContent ci of
-                            Nothing -> assertFailure "SignedData value is missing"
-                            Just SignedData{..} -> do
-                                contentContentType ci @?= ContentType oidSignedData
+                  case decodeDER sampleSignedData of
+                      Left e -> assertFailure e
+                      Right ci -> case contentContent ci of
+                          Nothing -> assertFailure "SignedData value is missing"
+                          Just SignedData{..} -> do
+                              contentContentType ci @?=
+                                  ContentType oidSignedData
 
-                                signedVersion @?= Version 1
-                                signedDigestAlgorithms @?= [ AlgorithmIdentifier DigestSHA1 (Just (Any [ASN1.Null])) ]
-                                contentContent signedContentInfo @?= Just (Any [ ASN1.OctetString "Lorem Ipsum Dolor Amet Sit!\n" ])
+                              signedVersion @?= Version 1
+                              signedDigestAlgorithms @?=
+                                  [ AlgorithmIdentifier DigestSHA1
+                                                        (Just (Any [ ASN1.Null
+                                                                   ]))
+                                  ]
+                              contentContent signedContentInfo @?=
+                                  Just (Any [ ASN1.OctetString "Lorem Ipsum Dolor Amet Sit!\n"
+                                            ])
 
-                                (length <$> signedCertificates) @?= Just 1
-                                signedCrls @?= Nothing
+                              (length <$> signedCertificates) @?= Just 1
+                              signedCrls @?= Nothing
 
-                                length signedSigners @?= 1
+                              length signedSigners @?= 1
 
-                                let Signer{..} = head signedSigners
-                                signerVersion @?= Version 1
-                                signerDigestAlgorithm @?= AlgorithmIdentifier DigestSHA1 (Just (Any [ASN1.Null]))
-                                signerSignatureAlgorithm @?= AlgorithmIdentifier SignatureRSA (Just (Any [ASN1.Null]))
+                              let Signer{..} = head signedSigners
+                              signerVersion @?= Version 1
+                              signerDigestAlgorithm @?=
+                                  AlgorithmIdentifier DigestSHA1
+                                                      (Just (Any [ ASN1.Null ]))
+                              signerSignatureAlgorithm @?=
+                                  AlgorithmIdentifier SignatureRSA
+                                                      (Just (Any [ ASN1.Null ]))
               ]
-
-
-

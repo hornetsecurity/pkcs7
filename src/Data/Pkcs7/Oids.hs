@@ -15,6 +15,7 @@ module Data.Pkcs7.Oids
     , oidEncryptedData
     , oidEnvelopedData
     , oidAuthenticatedData
+    , oidAuthEnvelopedData
       -- * Digest Algorithms
     , oidMD2
     , oidMD4
@@ -110,6 +111,12 @@ oidEnvelopedData = [ 1, 2, 840, 113549, 1, 7, 3 ]
 --     ct(1) 2 }
 oidAuthenticatedData :: OID
 oidAuthenticatedData = [ 1, 2, 840, 113549, 1, 9, 16, 1, 2 ]
+
+-- id-ct-authEnvelopedData OBJECT IDENTIFIER ::= { iso(1)
+--     member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9)
+--     smime(16) ct(1) 23 }
+oidAuthEnvelopedData :: OID
+oidAuthEnvelopedData = [ 1, 2, 840, 113549, 1, 9, 16, 1, 23 ]
 
 -- md2 OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840)
 --     rsadsi(113549) digestAlgorithm(2) 2 }

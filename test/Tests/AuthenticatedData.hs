@@ -44,10 +44,21 @@ instance Serial m a => Serial m (AuthenticatedData a) where
                           <~> pure example
                           <~> elements [ Nothing, Just [], Just [ example ] ]
 
+instance Monad m => Serial m AuthEnvelopedData where
+    series = decDepth $
+        AuthEnvelopedData <$> pure example
+                          <~> series
+                          <~> (cons0 [] \/ cons1 (: []))
+                          <~> pure example
+                          <~> elements [ Nothing, Just [], Just [ example ] ]
+                          <~> pure example
+                          <~> elements [ Nothing, Just [], Just [ example ] ]
+
 testAuthenticatedData :: TestTree
 testAuthenticatedData =
     testGroup "Data.Pkcs7.AuthenticatedData"
               [ testProperty "MessageAuthenticationCodeAlgorithm" (propRoundtripOID :: MessageAuthenticationCodeAlgorithm -> Bool)
               , testProperty "MessageAuthenticationCode" (propRoundtripASN1 :: MessageAuthenticationCode -> Bool)
               , testProperty "AuthenticatedData" (propRoundtripASN1 :: AuthenticatedData Data -> Bool)
+              , testProperty "AuthEnvelopedData" (propRoundtripASN1 :: AuthEnvelopedData -> Bool)
               ]

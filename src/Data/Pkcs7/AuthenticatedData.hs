@@ -10,6 +10,7 @@ module Data.Pkcs7.AuthenticatedData
     , MessageAuthenticationCodeAlgorithmIdentifier
     , MessageAuthenticationCode(..)
     , AuthenticatedData(..)
+    , AuthEnvelopedData(..)
     ) where
 
 import           Data.ByteArray           ( constEq )
@@ -22,7 +23,7 @@ import           Data.Pkcs7.Print
 import           Data.Pkcs7.Oids
 import           Data.Pkcs7.Types
 
-import           Data.Pkcs7.EnvelopedData ( Originator(..), Recipient(..) )
+import           Data.Pkcs7.EnvelopedData ( Originator(..), Recipient(..), EncryptedContent(..) )
 import           Data.Pkcs7.SignedData    ( DigestAlgorithmIdentifier )
 
 data MessageAuthenticationCodeAlgorithm = MessageAuthenticationCodeHMACSHA1
@@ -112,5 +113,51 @@ instance ASN1Object a => ASN1Structure (AuthenticatedData a) where
                                    <*> (fmap unSetOf <$> getImplicitMaybe 3)
 
 instance ASN1Object a => ASN1Object (AuthenticatedData a) where
+    toASN1 = toASN1Structure Sequence
+    fromASN1 = fromASN1Structure Sequence
+
+data AuthEnvelopedData =
+    AuthEnvelopedData { authEnvelopedVersion               :: Version
+                      , authEnvelopedOriginator            :: Maybe Originator
+                      , authEnvelopedRecipients            :: [Recipient]
+                      , authEnvelopedEncryptedContent      :: EncryptedContent
+                      , authEnvelopedProtectedAttributes   :: Maybe [Attribute Data]
+                      , authEnvelopedMac                   :: MessageAuthenticationCode
+                      , authEnvelopedUnprotectedAttributes :: Maybe [Attribute Data]
+                      }
+    deriving (Eq, Show)
+
+instance OIDable AuthEnvelopedData where
+    getObjectID _ = oidAuthEnvelopedData
+
+-- AuthEnvelopedData ::= SEQUENCE {
+--   version CMSVersion,
+--   originatorInfo [0] IMPLICIT OriginatorInfo OPTIONAL,
+--   recipientInfos RecipientInfos,
+--   authEncryptedContentInfo EncryptedContentInfo,
+--   authAttrs [1] IMPLICIT AuthAttributes OPTIONAL,
+--   mac MessageAuthenticationCode,
+--   unauthAttrs [2] IMPLICIT UnauthAttributes OPTIONAL }
+instance ASN1Structure AuthEnvelopedData where
+    toASN1Fields AuthEnvelopedData{..} = runPrintASN1State printer
+      where
+        printer = putObject authEnvelopedVersion
+            <> putImplicitMaybe 0 authEnvelopedOriginator
+            <> putSetOf authEnvelopedRecipients
+            <> putObject authEnvelopedEncryptedContent
+            <> putImplicitMaybe 1 (SetOf <$> authEnvelopedProtectedAttributes)
+            <> putObject authEnvelopedMac
+            <> putImplicitMaybe 2 (SetOf <$> authEnvelopedUnprotectedAttributes)
+    fromASN1Fields = runParseASN1State parser
+      where
+        parser = AuthEnvelopedData <$> getObject
+                                   <*> getImplicitMaybe 0
+                                   <*> getSetOf
+                                   <*> getObject
+                                   <*> (fmap unSetOf <$> getImplicitMaybe 1)
+                                   <*> getObject
+                                   <*> (fmap unSetOf <$> getImplicitMaybe 2)
+
+instance ASN1Object AuthEnvelopedData where
     toASN1 = toASN1Structure Sequence
     fromASN1 = fromASN1Structure Sequence

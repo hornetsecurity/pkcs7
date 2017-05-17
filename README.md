@@ -4,6 +4,11 @@ This library provides data structures and functions to represent,
 read, and write objects defined by PKCS #7 (RFC2315) and Cryptographic
 Message Syntax (RFC2630).
 
+If your're interested in an exciting career with Haskell have a look at our career page:
+
+https://www.hornetsecurity.com/de/karriere
+
+
 # Usage
 
 PKCS #7 and CMS are based on ASN.1.  This library uses the
